@@ -67,6 +67,19 @@ else
   echo "ASDF already installed."
 fi
 
+# ----------- Clean up conflicting dotfiles before stowing -----------
+
+echo "Cleaning up conflicting dotfiles (if any)..."
+CONFLICT_FILES=(.zshrc .p10k.zsh .tmux.conf .xinitrc)
+
+for file in "${CONFLICT_FILES[@]}"; do
+  TARGET="$HOME/$file"
+  if [ -e "$TARGET" ] && [ ! -L "$TARGET" ]; then
+    echo "⚠️ Removing existing non-symlink file: $TARGET"
+    rm -f "$TARGET"
+  fi
+done
+
 # ----------- Symlink config directories with stow -----------
 
 echo "Linking dotfiles with stow..."
