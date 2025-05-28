@@ -4,7 +4,7 @@ set -e
 
 # ----------- Variables -----------
 
-DOTFILES_REPO="https://github.com/SajanGhuman/Dotfiles"  # Your dotfiles repo URL
+DOTFILES_REPO="https://github.com/SajanGhuman/Dotfiles"
 DOTFILES_DIR="$HOME/Dotfiles"
 CONFIG_DIRS=(config p10k tmux xinitrc zsh)
 
@@ -25,19 +25,6 @@ else
   echo "Dotfiles repository already exists. Pulling latest changes..."
   git -C "$DOTFILES_DIR" pull
 fi
-
-# ----------- Symlink config directories with stow -----------
-
-cd "$DOTFILES_DIR" || { echo "Failed to cd to $DOTFILES_DIR"; exit 1; }
-
-for dir in "${CONFIG_DIRS[@]}"; do
-  if [ -d "$dir" ]; then
-    echo "Stowing $dir..."
-    stow -v -R -t "$HOME" "$dir"
-  else
-    echo "Directory $dir does not exist, skipping..."
-  fi
-done
 
 # ----------- Install Oh My Zsh -----------
 
@@ -79,6 +66,20 @@ if [ ! -d "${HOME}/.asdf" ]; then
 else
   echo "ASDF already installed."
 fi
+
+# ----------- Symlink config directories with stow -----------
+
+echo "Linking dotfiles with stow..."
+cd "$DOTFILES_DIR" || { echo "Failed to cd to $DOTFILES_DIR"; exit 1; }
+
+for dir in "${CONFIG_DIRS[@]}"; do
+  if [ -d "$dir" ]; then
+    echo "Stowing $dir..."
+    stow -v -R -t "$HOME" "$dir"
+  else
+    echo "Directory $dir does not exist, skipping..."
+  fi
+done
 
 echo ""
 echo "✅ Dotfiles and tools setup complete!"
